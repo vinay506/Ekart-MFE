@@ -100,7 +100,13 @@ const CartContent = () => {
 
       {items.length === 0 ? (
         <div className="cart-empty" data-testid="cart-empty">
-          Your cart is empty. <a href="/">Start shopping →</a>
+          Your cart is empty.{' '}
+          <button
+            className="btn-start-shopping"
+            onClick={() => window.dispatchEvent(new CustomEvent('ekart:navigate', { detail: '/' }))}
+          >
+            Start shopping →
+          </button>
         </div>
       ) : (
         <>

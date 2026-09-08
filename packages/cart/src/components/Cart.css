@@ -115,3 +115,17 @@
 }
 
 .btn-checkout:hover { background: #219a52; }
+
+.btn-checkout--disabled { background: #94a3b8; cursor: not-allowed; }
+.btn-checkout--disabled:hover { background: #94a3b8; }
+
+.btn-start-shopping {
+  background: none;
+  border: none;
+  color: #4f8ef7;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+  text-decoration: underline;
+  font-weight: 500;
+}

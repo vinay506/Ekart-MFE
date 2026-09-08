@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
@@ -11,11 +11,21 @@ import {
   setSearchQuery,
   default as productReducer,
 } from '../store/productSlice';
+import { watchFetchProducts } from '../store/productSaga';
+import './ProductList.css';
 
+// ── Module-level store ────────────────────────────────────────────────────────
+const sagaMiddleware = createSagaMiddleware();
+const productsStore = configureStore({
+  reducer: { products: productReducer },
+  middleware: (gDM) => gDM().concat(sagaMiddleware),
+});
+sagaMiddleware.run(watchFetchProducts);
+
+// ── Cross-MFE cart helper ─────────────────────────────────────────────────────
 const CART_KEY = 'ekart_cart';
 
-const addToCart = (product) => {
-  // Persist to localStorage so Cart picks it up even if not yet loaded
+const pushToCart = (product) => {
   try {
     const items = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
     const found = items.find((i) => i.id === product.id);
@@ -25,35 +35,17 @@ const addToCart = (product) => {
     }
     localStorage.setItem(CART_KEY, JSON.stringify(items));
   } catch { /* ignore */ }
-  // Notify Cart remote if it's already loaded
   window.dispatchEvent(new CustomEvent('ekart:addToCart', { detail: product }));
 };
-import { watchFetchProducts } from '../store/productSaga';
-import './ProductList.css';
 
-// Module-level store — created once when this MFE chunk is loaded.
-// Self-contained so ProductList works whether hosted standalone or inside a host shell.
-const sagaMiddleware = createSagaMiddleware();
-const productsStore = configureStore({
-  reducer: { products: productReducer },
-  middleware: (gDM) => gDM().concat(sagaMiddleware),
-});
-sagaMiddleware.run(watchFetchProducts);
-
+// ── Components ────────────────────────────────────────────────────────────────
 const ProductCard = ({ product, onAddToCart }) => (
   <div className="product-card" data-testid="product-card">
-    <img
-      src={product.thumbnail}
-      alt={product.title}
-      className="product-thumb"
-      loading="lazy"
-    />
+    <img src={product.thumbnail} alt={product.title} className="product-thumb" loading="lazy" />
     <div className="product-body">
       <p className="product-brand">{product.brand}</p>
       <h3 className="product-title">{product.title}</h3>
-      <p className="product-description">
-        {product.description?.slice(0, 80)}...
-      </p>
+      <p className="product-description">{product.description?.slice(0, 80)}...</p>
       <div className="product-meta">
         <span className="product-price">${product.price}</span>
         <span className="product-rating">⭐ {product.rating}</span>
@@ -70,6 +62,13 @@ const ProductCard = ({ product, onAddToCart }) => (
   </div>
 );
 
+const Toast = ({ message, visible }) => (
+  <div className={`cart-toast${visible ? ' cart-toast--visible' : ''}`} role="status" aria-live="polite">
+    <span className="cart-toast-icon">🛒</span>
+    {message}
+  </div>
+);
+
 const ProductListContent = () => {
   const dispatch = useDispatch();
   const products = useSelector(selectProducts);
@@ -77,12 +76,23 @@ const ProductListContent = () => {
   const error    = useSelector(selectProductsError);
   const query    = useSelector(selectSearchQuery);
 
+  const [toast, setToast] = useState({ visible: false, message: '' });
+
   useEffect(() => {
     dispatch(fetchProductsStart());
   }, [dispatch]);
 
+  const handleAddToCart = useCallback((product) => {
+    pushToCart(product);
+    setToast({ visible: true, message: `"${product.title}" added to cart` });
+    // Auto-hide after 2.5 s
+    setTimeout(() => setToast((t) => ({ ...t, visible: false })), 2500);
+  }, []);
+
   return (
     <div className="products-page" data-testid="product-list">
+      <Toast visible={toast.visible} message={toast.message} />
+
       <div className="products-toolbar">
         <h2 className="products-heading">All Products</h2>
         <input
@@ -96,31 +106,15 @@ const ProductListContent = () => {
         />
       </div>
 
-      {loading && (
-        <div className="status-message" data-testid="loading">
-          Loading products…
-        </div>
-      )}
-
-      {!loading && error && (
-        <div className="status-message error" data-testid="error">
-          ⚠ {error}
-        </div>
-      )}
-
+      {loading && <div className="status-message" data-testid="loading">Loading products…</div>}
+      {!loading && error && <div className="status-message error" data-testid="error">⚠ {error}</div>}
       {!loading && !error && products.length === 0 && (
-        <div className="status-message" data-testid="no-results">
-          No products found for "{query}".
-        </div>
+        <div className="status-message" data-testid="no-results">No products found for "{query}".</div>
       )}
 
       <div className="products-grid">
         {products.map((p) => (
-          <ProductCard
-            key={p.id}
-            product={p}
-            onAddToCart={addToCart}
-          />
+          <ProductCard key={p.id} product={p} onAddToCart={handleAddToCart} />
         ))}
       </div>
     </div>

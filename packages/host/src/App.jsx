@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectAuthUser, selectIsAuthenticated } from './store/authSlice';
@@ -16,6 +16,13 @@ const PageLoader = ({ label }) => (
 const Header = () => {
   const dispatch        = useDispatch();
   const navigate        = useNavigate();
+
+  // Let remotes request navigation without importing react-router-dom
+  useEffect(() => {
+    const handler = (e) => navigate(e.detail);
+    window.addEventListener('ekart:navigate', handler);
+    return () => window.removeEventListener('ekart:navigate', handler);
+  }, [navigate]);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user            = useSelector(selectAuthUser);
 
