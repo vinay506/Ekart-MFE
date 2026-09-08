@@ -1,0 +1,17 @@
+{
+  "name": "ekart-mfe",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "concurrently \"npm run start -w packages/products\" \"npm run start -w packages/cart\" \"npm run start:client -w packages/host\"",
+    "start:ssr": "concurrently \"npm run start -w packages/products\" \"npm run start -w packages/cart\" \"npm run start:ssr -w packages/host\"",
+    "build": "npm run build -w packages/products && npm run build -w packages/cart && npm run build -w packages/host",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
