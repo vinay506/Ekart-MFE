@@ -68,4 +68,7 @@ export const selectCartCount = createSelector(
   (cart) => (cart?.items ?? []).reduce((sum, i) => sum + i.quantity, 0)
 );
 
+export const selectCartSyncing = (state) => state.cart?.syncing ?? false;
+export const selectCartError   = (state) => state.cart?.error   ?? null;
+
 export default cartSlice.reducer;

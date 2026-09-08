@@ -55,6 +55,8 @@ body {
 
 .nav-link:hover { color: #fff; }
 .nav-link.active { color: #fff; border-color: #4f8ef7; }
+.nav-link--admin { color: #fbbf24 !important; }
+.nav-link--admin.active { border-color: #fbbf24; }
 
 /* ── Main ── */
 .main { flex: 1; padding: 2rem; max-width: 1280px; margin: 0 auto; width: 100%; }

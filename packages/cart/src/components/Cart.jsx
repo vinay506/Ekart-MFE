@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
@@ -6,6 +6,8 @@ import {
   selectCartItems,
   selectCartTotal,
   selectCartCount,
+  selectCartSyncing,
+  selectCartError,
   removeItem,
   updateQuantity,
   clearCart,
@@ -16,7 +18,7 @@ import {
 import { watchCartSaga } from '../store/cartSaga';
 import './Cart.css';
 
-// ── Module-level store (created once when this MFE chunk loads) ──────────────
+// ── Module-level store ────────────────────────────────────────────────────────
 const STORAGE_KEY = 'ekart_cart';
 
 const loadPersistedItems = () => {
@@ -31,18 +33,16 @@ const cartStore = configureStore({
 });
 sagaMiddleware.run(watchCartSaga);
 
-// Persist cart changes to localStorage
 cartStore.subscribe(() => {
   const { items } = cartStore.getState().cart;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 });
 
-// Cross-MFE: receive add-to-cart events from the products remote
 window.addEventListener('ekart:addToCart', (e) => {
   cartStore.dispatch(addItem(e.detail));
 });
 
-// ── Components ────────────────────────────────────────────────────────────────
+// ── Sub-components ────────────────────────────────────────────────────────────
 const CartItem = ({ item, onRemove, onQuantityChange }) => (
   <div className="cart-item" data-testid="cart-item">
     <img src={item.thumbnail} alt={item.title} className="cart-item-img" />
@@ -52,20 +52,14 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => (
     </div>
     <div className="cart-item-controls">
       <input
-        type="number"
-        min="1"
-        value={item.quantity}
+        type="number" min="1" value={item.quantity}
         className="qty-input"
         onChange={(e) => onQuantityChange(item.id, Number(e.target.value))}
         data-testid={`quantity-${item.id}`}
         aria-label={`Quantity for ${item.title}`}
       />
-      <button
-        className="btn-remove"
-        onClick={() => onRemove(item.id)}
-        data-testid={`remove-${item.id}`}
-        aria-label={`Remove ${item.title}`}
-      >
+      <button className="btn-remove" onClick={() => onRemove(item.id)}
+        data-testid={`remove-${item.id}`} aria-label={`Remove ${item.title}`}>
         ✕
       </button>
     </div>
@@ -75,19 +69,60 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => (
   </div>
 );
 
+const OrderSuccess = ({ orderNum, onContinue, onViewOrders }) => (
+  <div className="order-success" data-testid="order-success">
+    <div className="order-success-icon">✓</div>
+    <h2>Order Placed!</h2>
+    <p className="order-success-num">Order <strong>{orderNum}</strong></p>
+    <p className="order-success-msg">
+      Your order has been confirmed. You'll receive a confirmation shortly.
+    </p>
+    <div className="order-success-actions">
+      <button className="btn-view-orders" onClick={onViewOrders}>View Orders</button>
+      <button className="btn-continue" onClick={onContinue}>Continue Shopping</button>
+    </div>
+  </div>
+);
+
 const CartContent = () => {
   const dispatch = useDispatch();
-  const items  = useSelector(selectCartItems);
-  const total  = useSelector(selectCartTotal);
-  const count  = useSelector(selectCartCount);
+  const items   = useSelector(selectCartItems);
+  const total   = useSelector(selectCartTotal);
+  const count   = useSelector(selectCartCount);
+  const syncing = useSelector(selectCartSyncing);
+  const error   = useSelector(selectCartError);
 
-  // Read role from localStorage — auth lives in the host but Cart is isolated.
   const [userRole] = useState(() => {
     try { return JSON.parse(localStorage.getItem('ekart_auth'))?.user?.role ?? null; }
     catch { return null; }
   });
+  const [orderNum, setOrderNum] = useState(null);
+  const prevSyncing = useRef(false);
+
+  // Detect when saga finishes processing checkout
+  useEffect(() => {
+    if (prevSyncing.current && !syncing) {
+      const num = `ORD-${Date.now().toString().slice(-6)}`;
+      setOrderNum(num);
+      dispatch(clearCart());
+      localStorage.removeItem(STORAGE_KEY);
+    }
+    prevSyncing.current = syncing;
+  }, [syncing, dispatch]);
 
   const isAdmin = userRole === 'admin';
+
+  if (orderNum) {
+    return (
+      <div className="cart-wrapper">
+        <OrderSuccess
+          orderNum={orderNum}
+          onContinue={() => window.dispatchEvent(new CustomEvent('ekart:navigate', { detail: '/' }))}
+          onViewOrders={() => window.dispatchEvent(new CustomEvent('ekart:navigate', { detail: '/orders' }))}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="cart-wrapper" data-testid="cart">
@@ -97,6 +132,8 @@ const CartContent = () => {
           {count} item{count !== 1 ? 's' : ''}
         </span>
       </div>
+
+      {error && <p className="cart-error">⚠ {error}</p>}
 
       {items.length === 0 ? (
         <div className="cart-empty" data-testid="cart-empty">
@@ -116,19 +153,13 @@ const CartContent = () => {
                 key={item.id}
                 item={item}
                 onRemove={(id) => dispatch(removeItem(id))}
-                onQuantityChange={(id, qty) =>
-                  dispatch(updateQuantity({ id, quantity: qty }))
-                }
+                onQuantityChange={(id, qty) => dispatch(updateQuantity({ id, quantity: qty }))}
               />
             ))}
           </div>
 
           <div className="cart-footer">
-            <button
-              className="btn-clear"
-              onClick={() => dispatch(clearCart())}
-              data-testid="clear-cart"
-            >
+            <button className="btn-clear" onClick={() => dispatch(clearCart())} data-testid="clear-cart">
               Clear Cart
             </button>
             <div className="cart-summary">
@@ -137,11 +168,12 @@ const CartContent = () => {
             </div>
             {isAdmin ? (
               <button
-                className="btn-checkout"
+                className={`btn-checkout${syncing ? ' btn-checkout--loading' : ''}`}
                 onClick={() => dispatch(syncStart())}
+                disabled={syncing}
                 data-testid="checkout-btn"
               >
-                Checkout
+                {syncing ? 'Placing order…' : 'Checkout'}
               </button>
             ) : (
               <button className="btn-checkout btn-checkout--disabled" disabled data-testid="checkout-btn">

@@ -4,6 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectAuthUser, selectIsAuthenticated } from './store/authSlice';
 import AuthGuard from './components/AuthGuard';
 import LoginPage from './pages/LoginPage';
+import OrdersPage from './pages/OrdersPage';
+import ProfilePage from './pages/ProfilePage';
+import AdminPage from './pages/AdminPage';
+import UnauthorizedPage from './pages/UnauthorizedPage';
 import './App.css';
 
 const ProductList = lazy(() => import('products/ProductList'));
@@ -16,6 +20,9 @@ const PageLoader = ({ label }) => (
 const Header = () => {
   const dispatch        = useDispatch();
   const navigate        = useNavigate();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user            = useSelector(selectAuthUser);
+  const isAdmin         = user?.role === 'admin';
 
   // Let remotes request navigation without importing react-router-dom
   useEffect(() => {
@@ -23,8 +30,6 @@ const Header = () => {
     window.addEventListener('ekart:navigate', handler);
     return () => window.removeEventListener('ekart:navigate', handler);
   }, [navigate]);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const user            = useSelector(selectAuthUser);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -46,6 +51,17 @@ const Header = () => {
           <NavLink to="/cart" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
             Cart
           </NavLink>
+          <NavLink to="/orders" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            Orders
+          </NavLink>
+          <NavLink to="/profile" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            Profile
+          </NavLink>
+          {isAdmin && (
+            <NavLink to="/admin" className={({ isActive }) => isActive ? 'nav-link nav-link--admin active' : 'nav-link nav-link--admin'}>
+              Admin
+            </NavLink>
+          )}
         </nav>
       )}
 
@@ -65,27 +81,35 @@ const App = () => (
     <Header />
     <main className="main">
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/"
-          element={
-            <AuthGuard>
-              <Suspense fallback={<PageLoader label="Loading products..." />}>
-                <ProductList />
-              </Suspense>
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <AuthGuard>
-              <Suspense fallback={<PageLoader label="Loading cart..." />}>
-                <Cart />
-              </Suspense>
-            </AuthGuard>
-          }
-        />
+        {/* Public */}
+        <Route path="/login"        element={<LoginPage />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
+        {/* Authenticated — all logged-in users */}
+        <Route path="/" element={
+          <AuthGuard>
+            <Suspense fallback={<PageLoader label="Loading products..." />}>
+              <ProductList />
+            </Suspense>
+          </AuthGuard>
+        } />
+        <Route path="/cart" element={
+          <AuthGuard>
+            <Suspense fallback={<PageLoader label="Loading cart..." />}>
+              <Cart />
+            </Suspense>
+          </AuthGuard>
+        } />
+        <Route path="/orders"  element={<AuthGuard><OrdersPage /></AuthGuard>} />
+        <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
+
+        {/* Admin only */}
+        <Route path="/admin" element={
+          <AuthGuard requiredRole="admin">
+            <AdminPage />
+          </AuthGuard>
+        } />
+
         <Route path="*" element={<div className="not-found">404 — Page not found</div>} />
       </Routes>
     </main>

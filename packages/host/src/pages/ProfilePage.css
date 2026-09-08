@@ -1,0 +1,58 @@
+.profile-page { display: flex; justify-content: center; padding: 1rem 0; }
+
+.profile-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.09);
+  text-align: center;
+}
+
+.profile-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; font-weight: 700; color: #fff;
+  margin: 0 auto 0.75rem;
+}
+.profile-avatar--admin { background: #1a1a2e; }
+.profile-avatar--user  { background: #4f8ef7; }
+
+.profile-name { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.4rem; }
+
+.profile-badge {
+  display: inline-block;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 0.2rem 0.75rem; border-radius: 999px; margin-bottom: 1.5rem;
+}
+.profile-badge--admin { background: #fef08a; color: #854d0e; }
+.profile-badge--user  { background: #dbeafe; color: #1d4ed8; }
+
+.profile-info {
+  background: #f8fafc; border-radius: 10px; padding: 1rem;
+  margin-bottom: 1.5rem; text-align: left;
+}
+.profile-row { display: flex; justify-content: space-between; padding: 0.4rem 0; }
+.profile-row + .profile-row { border-top: 1px solid #e2e8f0; }
+.profile-label { font-size: 0.85rem; color: #64748b; }
+.profile-value { font-size: 0.85rem; font-weight: 600; color: #1a1a2e; }
+
+.profile-section { border-radius: 10px; padding: 1.25rem; text-align: left; }
+.profile-section h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+.profile-section p  { font-size: 0.85rem; color: #64748b; margin-bottom: 1rem; }
+.profile-section--admin { background: #fff7ed; }
+.profile-section--user  { background: #eff6ff; }
+
+.profile-stats { display: flex; gap: 1.5rem; margin-bottom: 1.25rem; }
+.profile-stat { display: flex; flex-direction: column; align-items: center; }
+.profile-stat strong { font-size: 1.4rem; font-weight: 700; color: #1a1a2e; }
+.profile-stat span   { font-size: 0.75rem; color: #64748b; }
+
+.profile-action-btn {
+  width: 100%; padding: 0.65rem; border: none; border-radius: 8px;
+  font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+}
+.profile-action-btn:hover { opacity: 0.85; }
+.profile-action-btn--admin { background: #1a1a2e; color: #fff; }
+.profile-action-btn--user  { background: #4f8ef7; color: #fff; }
