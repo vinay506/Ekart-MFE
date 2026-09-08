@@ -34,6 +34,8 @@ module.exports = {
       },
       shared: {
         react: { singleton: true, eager: true, requiredVersion: '^19.0.0' },
+        'react/jsx-runtime': { singleton: true, eager: true, requiredVersion: '^19.0.0' },
+        'react/jsx-dev-runtime': { singleton: true, eager: true, requiredVersion: '^19.0.0' },
         'react-dom': { singleton: true, eager: true, requiredVersion: '^19.0.0' },
         'react-router-dom': { singleton: true, eager: true },
         'react-redux': { singleton: true, eager: true },

@@ -4,7 +4,7 @@ const fs = require('fs');
 const React = require('react');
 const { renderToString } = require('react-dom/server');
 const { Provider } = require('react-redux');
-const { StaticRouter } = require('react-router-dom/server');
+const { StaticRouter } = require('react-router-dom');
 const App = require('../src/App').default;
 const { createStore } = require('../src/store');
 
@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Serve compiled client bundles
-app.use('/static', express.static(path.resolve(__dirname, '../dist/client')));
+app.use(express.static(path.resolve(__dirname, '../client')));
 
 app.get('*', (req, res) => {
   // New store per request — never share state across requests
@@ -36,12 +36,12 @@ app.get('*', (req, res) => {
     .replace(/</g, '\\u003c'); // prevent XSS via </script>
 
   const template = fs.readFileSync(
-    path.resolve(__dirname, '../dist/client/index.html'),
+    path.resolve(__dirname, '../client/index.html'),
     'utf-8'
   );
 
   const html = template
-    .replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`)
+    .replace(/<div id=["']?root["']?>\s*<\/div>/, `<div id="root">${appHtml}</div>`)
     .replace(
       '</head>',
       `<script>window.__PRELOADED_STATE__ = ${preloadedState};</script></head>`

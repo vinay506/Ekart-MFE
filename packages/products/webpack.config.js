@@ -35,6 +35,8 @@ module.exports = {
       },
       shared: {
         react: { singleton: true, requiredVersion: '^19.0.0' },
+        'react/jsx-runtime': { singleton: true, requiredVersion: '^19.0.0' },
+        'react/jsx-dev-runtime': { singleton: true, requiredVersion: '^19.0.0' },
         'react-dom': { singleton: true, requiredVersion: '^19.0.0' },
         'react-redux': { singleton: true },
         '@reduxjs/toolkit': { singleton: true },

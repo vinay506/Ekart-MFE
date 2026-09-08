@@ -1,4 +1,5 @@
 const path = require('path');
+const { ModuleFederationPlugin } = require('webpack').container;
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
@@ -26,4 +27,13 @@ module.exports = {
       { test: /\.css$/, use: 'null-loader' },
     ],
   },
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'host',
+      remotes: {
+        products: 'products@http://localhost:3001/remoteEntry.js',
+        cart: 'cart@http://localhost:3002/remoteEntry.js',
+      },
+    }),
+  ],
 };
