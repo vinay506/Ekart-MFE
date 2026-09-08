@@ -1,9 +1,9 @@
 import { combineReducers } from '@reduxjs/toolkit';
+import authReducer from './authSlice';
 
-// The host shell only owns app-level state.
-// Each remote injects its own reducer when it mounts.
 const rootReducer = combineReducers({
-  app: (state = { ready: true }, _action) => state,
+  app:  (state = { ready: true }, _action) => state,
+  auth: authReducer,
 });
 
 export default rootReducer;

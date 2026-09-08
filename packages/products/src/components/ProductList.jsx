@@ -9,9 +9,25 @@ import {
   selectSearchQuery,
   fetchProductsStart,
   setSearchQuery,
-  addToCartThunk,
   default as productReducer,
 } from '../store/productSlice';
+
+const CART_KEY = 'ekart_cart';
+
+const addToCart = (product) => {
+  // Persist to localStorage so Cart picks it up even if not yet loaded
+  try {
+    const items = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+    const found = items.find((i) => i.id === product.id);
+    if (found) { found.quantity += 1; } else {
+      items.push({ id: product.id, title: product.title, price: product.price,
+        thumbnail: product.thumbnail, quantity: 1 });
+    }
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+  } catch { /* ignore */ }
+  // Notify Cart remote if it's already loaded
+  window.dispatchEvent(new CustomEvent('ekart:addToCart', { detail: product }));
+};
 import { watchFetchProducts } from '../store/productSaga';
 import './ProductList.css';
 
@@ -103,7 +119,7 @@ const ProductListContent = () => {
           <ProductCard
             key={p.id}
             product={p}
-            onAddToCart={(product) => dispatch(addToCartThunk(product))}
+            onAddToCart={addToCart}
           />
         ))}
       </div>

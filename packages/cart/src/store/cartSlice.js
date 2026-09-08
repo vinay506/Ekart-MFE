@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 
 const cartSlice = createSlice({
   name: 'cart',
@@ -51,10 +51,21 @@ export const {
   syncFailure,
 } = cartSlice.actions;
 
-export const selectCartItems = (state) => state.cart?.items ?? [];
-export const selectCartTotal = (state) =>
-  (state.cart?.items ?? []).reduce((sum, i) => sum + i.price * i.quantity, 0);
-export const selectCartCount = (state) =>
-  (state.cart?.items ?? []).reduce((sum, i) => sum + i.quantity, 0);
+const selectCartState = (state) => state.cart;
+
+export const selectCartItems = createSelector(
+  selectCartState,
+  (cart) => cart?.items ?? []
+);
+
+export const selectCartTotal = createSelector(
+  selectCartState,
+  (cart) => (cart?.items ?? []).reduce((sum, i) => sum + i.price * i.quantity, 0)
+);
+
+export const selectCartCount = createSelector(
+  selectCartState,
+  (cart) => (cart?.items ?? []).reduce((sum, i) => sum + i.quantity, 0)
+);
 
 export default cartSlice.reducer;

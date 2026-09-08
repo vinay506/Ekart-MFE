@@ -22,6 +22,13 @@ export const createStore = (preloadedState = {}) => {
 
   sagaMiddleware.run(rootSaga);
 
+  // Persist auth state across page refreshes
+  store.subscribe(() => {
+    try {
+      localStorage.setItem('ekart_auth', JSON.stringify(store.getState().auth));
+    } catch { /* quota exceeded or SSR */ }
+  });
+
   return store;
 };
 
