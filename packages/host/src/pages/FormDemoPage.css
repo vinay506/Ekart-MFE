@@ -1,0 +1,438 @@
+/* ── Page shell ──────────────────────────────────────────────────── */
+.fdp-page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.fdp-header {
+  margin-bottom: 1.75rem;
+}
+
+.fdp-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 0.35rem;
+}
+
+.fdp-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.fdp-subtitle code {
+  background: #f0f2f5;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #1a1a2e;
+}
+
+/* ── Success banner ──────────────────────────────────────────────── */
+.fdp-success {
+  background: #dcfce7;
+  border: 1.5px solid #16a34a;
+  color: #15803d;
+  border-radius: 10px;
+  padding: 0.85rem 1.2rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Two-column layout ───────────────────────────────────────────── */
+.fdp-layout {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .fdp-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Form card ───────────────────────────────────────────────────── */
+.fdp-form {
+  background: #fff;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ── Section ─────────────────────────────────────────────────────── */
+.fdp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fdp-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1.5px solid #e2e8f0;
+}
+
+/* ── Grid rows ───────────────────────────────────────────────────── */
+.fdp-row {
+  display: grid;
+  gap: 1rem;
+}
+
+.fdp-row--2 { grid-template-columns: 1fr 1fr; }
+.fdp-row--3 { grid-template-columns: 1fr 1fr 1fr; }
+
+@media (max-width: 600px) {
+  .fdp-row--2,
+  .fdp-row--3 { grid-template-columns: 1fr; }
+}
+
+/* ── Field ───────────────────────────────────────────────────────── */
+.fdp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fdp-field--half {
+  max-width: 280px;
+}
+
+.fdp-field label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.fdp-req {
+  color: #dc2626;
+  margin-left: 2px;
+}
+
+.fdp-optional {
+  color: #94a3b8;
+  font-weight: 400;
+  font-size: 0.78rem;
+}
+
+.fdp-field input,
+.fdp-field select,
+.fdp-field textarea {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.fdp-field input:focus,
+.fdp-field select:focus,
+.fdp-field textarea:focus {
+  border-color: #4f8ef7;
+  box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
+}
+
+.fdp-field input[aria-invalid='true'],
+.fdp-field select[aria-invalid='true'],
+.fdp-field textarea[aria-invalid='true'] {
+  border-color: #dc2626;
+}
+
+.fdp-field input[aria-invalid='true']:focus,
+.fdp-field select[aria-invalid='true']:focus,
+.fdp-field textarea[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.fdp-error {
+  font-size: 0.78rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* ── Checkbox ────────────────────────────────────────────────────── */
+.fdp-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.fdp-checkbox input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4f8ef7;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Radio cards ─────────────────────────────────────────────────── */
+.fdp-radio-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 500px) {
+  .fdp-radio-group { grid-template-columns: 1fr; }
+}
+
+.fdp-radio-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+}
+
+.fdp-radio-card input[type='radio'] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fdp-radio-card:hover {
+  border-color: #4f8ef7;
+  background: #f8faff;
+}
+
+.fdp-radio-card--selected {
+  border-color: #4f8ef7;
+  background: #eff6ff;
+}
+
+.fdp-radio-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.fdp-radio-desc {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* ── Actions ─────────────────────────────────────────────────────── */
+.fdp-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1.5px solid #e2e8f0;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────── */
+.fdp-btn {
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.fdp-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.fdp-btn:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+.fdp-btn--primary {
+  background: #1a1a2e;
+  color: #fff;
+}
+
+.fdp-btn--primary:not(:disabled):hover {
+  background: #2d2d4e;
+}
+
+.fdp-btn--ghost {
+  background: #f0f2f5;
+  color: #374151;
+  border: 1.5px solid #e2e8f0;
+}
+
+.fdp-btn--ghost:not(:disabled):hover {
+  background: #e2e8f0;
+}
+
+.fdp-btn--danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.fdp-btn--danger:not(:disabled):hover {
+  background: #b91c1c;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────── */
+.fdp-sidebar {
+  background: #fff;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  padding: 1.25rem 1.25rem 1rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.fdp-sidebar-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1.5px solid #e2e8f0;
+}
+
+.fdp-state-list {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fdp-state-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  background: #f8fafc;
+  border-radius: 7px;
+  padding: 0.45rem 0.65rem;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.fdp-state-row dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.fdp-state-row dd {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+  text-align: right;
+}
+
+.fdp-state-row--warn {
+  background: #fffbeb;
+  border-color: #fbbf24;
+}
+
+.fdp-state-row--warn dd { color: #92400e; }
+
+.fdp-state-row--error {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.fdp-state-row--error dd { color: #dc2626; }
+
+.fdp-state-row--ok {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.fdp-state-row--ok dd { color: #15803d; }
+
+.fdp-sidebar-hint {
+  font-size: 0.73rem;
+  color: #94a3b8;
+  margin: 1rem 0 0;
+  line-height: 1.45;
+}
+
+/* ── Modal overlay ───────────────────────────────────────────────── */
+.fdp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 15, 30, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+.fdp-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem 2rem 1.75rem;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.fdp-modal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fef2f2;
+  border: 2px solid #fca5a5;
+  color: #dc2626;
+  font-size: 1.3rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.fdp-modal-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 0.6rem;
+}
+
+.fdp-modal-body {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.fdp-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.fdp-modal-actions .fdp-btn {
+  min-width: 110px;
+}

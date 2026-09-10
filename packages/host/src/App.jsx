@@ -8,6 +8,7 @@ import OrdersPage from './pages/OrdersPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
+import FormDemoPage from './pages/FormDemoPage';
 import './App.css';
 
 const ProductList = lazy(() => import('products/ProductList'));
@@ -57,6 +58,9 @@ const Header = () => {
           <NavLink to="/profile" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
             Profile
           </NavLink>
+          <NavLink to="/form-demo" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+            Form Demo
+          </NavLink>
           {isAdmin && (
             <NavLink to="/admin" className={({ isActive }) => isActive ? 'nav-link nav-link--admin active' : 'nav-link nav-link--admin'}>
               Admin
@@ -100,8 +104,9 @@ const App = () => (
             </Suspense>
           </AuthGuard>
         } />
-        <Route path="/orders"  element={<AuthGuard><OrdersPage /></AuthGuard>} />
-        <Route path="/profile" element={<AuthGuard><ProfilePage /></AuthGuard>} />
+        <Route path="/orders"    element={<AuthGuard><OrdersPage /></AuthGuard>} />
+        <Route path="/profile"   element={<AuthGuard><ProfilePage /></AuthGuard>} />
+        <Route path="/form-demo" element={<AuthGuard><FormDemoPage /></AuthGuard>} />
 
         {/* Admin only */}
         <Route path="/admin" element={
